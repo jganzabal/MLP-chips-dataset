@@ -12,5 +12,5 @@
 \$ conda install jupyterlab  
 \$ conda install matplotlib  
 \$ conda install cycler  
-\$ jupyter-lab ejercicio.ipynb 
+\$ jupyter-lab ejercicio.ipynb   
 \$ conda install keras
