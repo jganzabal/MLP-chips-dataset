@@ -101,3 +101,48 @@ def plot_boundaries(X_train, y_train, score, probability_func, h = .02, ax = Non
     ax.set_yticks(())
     ax.text(xx.max() - .3, yy.min() + .3, ('%.2f' % score).lstrip('0'),
             size=40, horizontalalignment='right')
+    
+def plot_boundaries_for_video(X_train, y_train, probability_func, score = None, epoch= None , h = .02, ax = None, margin=0.5):
+    X = X_train
+    x_min, x_max = X[:, 0].min() - margin, X[:, 0].max() + margin
+    y_min, y_max = X[:, 1].min() - margin, X[:, 1].max() + margin
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
+                         np.arange(y_min, y_max, h))
+
+    if ax is None:
+        ax = plt.subplot(1, 1, 1)
+    
+    # Plot the decision boundary. For that, we will assign a color to each
+    # point in the mesh [x_min, x_max]x[y_min, y_max].
+    
+    Zaux = probability_func(np.c_[xx.ravel(), yy.ravel()])
+    
+    if Zaux.shape[1] == 2:
+        Z = Zaux[:, 1]
+    else:
+        Z = Zaux[:, 0]
+
+    # Put the result into a color plot
+    Z = Z.reshape(xx.shape)
+    
+    cm = plt.cm.RdBu
+    cm_bright = ListedColormap(['#FF0000', '#0000FF'])
+    
+    cf = ax.contourf(xx, yy, Z, 50, cmap=cm, alpha=.8)
+    plt.colorbar(cf, ax=ax)
+    #plt.colorbar(Z,ax=ax)
+
+    # Plot also the training points
+    ax.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap=cm_bright,
+               edgecolors='k', s=100)
+
+    ax.set_xlim(xx.min(), xx.max())
+    ax.set_ylim(yy.min(), yy.max())
+    ax.set_xticks(())
+    ax.set_yticks(())
+    if score:
+        ax.text(xx.min() + .1, yy.min() + .1, ('%.2f' % score).lstrip('0'),
+            size=20, horizontalalignment='left')
+    if epoch:
+        ax.text(xx.max() - .1, yy.min() + .1, ('%s' % epoch).lstrip('0'),
+                size=20, horizontalalignment='right')
