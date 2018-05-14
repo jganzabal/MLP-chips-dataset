@@ -61,7 +61,7 @@ class PlotLosses(keras.callbacks.Callback):
                     self.val_losses.append(score[0])
                     self.val_acc.append(score[1])
 
-def plot_boundaries(X_train, y_train, score, probability_func, h = .02, ax = None, margin=0.5):
+def plot_boundaries_keras(X_train, y_train, score, probability_func, degree=None, bias=False, h = .02, ax = None, margin=0.5):
     X = X_train
     x_min, x_max = X[:, 0].min() - margin, X[:, 0].max() + margin
     y_min, y_max = X[:, 1].min() - margin, X[:, 1].max() + margin
@@ -74,7 +74,12 @@ def plot_boundaries(X_train, y_train, score, probability_func, h = .02, ax = Non
     # Plot the decision boundary. For that, we will assign a color to each
     # point in the mesh [x_min, x_max]x[y_min, y_max].
     
-    Zaux = probability_func(np.c_[xx.ravel(), yy.ravel()])
+    if degree is not None:
+        polynomial_set = get_polynimial_set(np.c_[xx.ravel(), yy.ravel()], degree = degree, bias=bias)
+        Zaux = probability_func(polynomial_set)
+    else:
+        Zaux = probability_func(np.c_[xx.ravel(), yy.ravel()])
+        # Z = Z_aux[:, 1]
     
     if Zaux.shape[1] == 2:
         Z = Zaux[:, 1]
